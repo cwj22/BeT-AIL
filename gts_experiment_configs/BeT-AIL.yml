@@ -1,0 +1,62 @@
+# config: utils/config.py
+# script: gts_imitation_env.py
+experiment:
+  description: "Part of large exp"
+  logging_directory: 'results/gail/gts_fix_steering/decisiontransformer2'
+  n_eval_episodes: 20
+  training_steps: 800
+  save_every_n_steps: 10
+  debug_use_ground_truth: False
+  exp_name: "BeT-AIL"
+  decision_transformer_config:
+    DecisionTransformerConfig:
+      aug_action_range: 0.0
+      path_to_model: '/media/msc/5TB/catherine/Documents/Research/irl-gts/exp/2023.11.07/162440-multitrack/pretrain_model.pt'
+      path_to_exp_config: '/media/msc/5TB/catherine/Documents/Research/irl-gts/exp/2023.11.07/162440-multitrack/online_dt_config.json'
+      enable: True
+  residual_BC_config:
+    ResidualBCPolicyConfig:
+      aug_action_range: 0.05
+      path_to_model: '/media/msc/5TB/catherine/Documents/Research/irl-gts/results/bc_and_transformer_bases/TrainBCSB3-2023-10-11-10-39-49-248240/BC_warm_start/BC_policy_epochs400.th'
+      enable: False
+  recompute_disc_reward: False
+  demo_batch_size: 2000
+  n_disc_updates_per_round: 32
+  gen_train_timesteps: 1
+  disc_learning_starts: 0
+  reward_net_kwargs:
+    RewardNetConfig:
+      use_state: True
+      use_action: True
+      use_next_state: False
+      use_done: False
+      use_spectral_norm: True
+  disc_augment_reward:
+    DiscAugmentListConfig:
+      config_list:
+        DiscAugmentGradientPenaltyConfig:
+          grad_pen_scale: 10.
+          grad_pen_targ: 1.
+          grad_pen_type: 'wgan'
+          one_sided_pen: True
+        DiscAugmentEntropyConfig:
+          ent_reg_scale: 0.001
+  env_config:
+    GTSEnvConfig:
+      lap_time_eval_episode_duration: 5000 # 500 second evaluation
+      episode_duration_sec: 50 # 50 second rollouts
+  gen_learner_config:
+    SAC_Config:
+      seed: 0
+      batch_size: 4096
+      learning_rate: 0.0003
+      learning_rate_schedule: 'constant'
+      learning_starts: 40_000
+      tau: 0.002
+      gamma: 0.99
+      train_freq: 1
+      gradient_steps: 2500
+      target_update_interval: 1
+  disc_opt_kwargs:
+    lr: 0.0005
+

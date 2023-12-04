@@ -1,0 +1,4 @@
+gym
+stable-baselines3==1.6.2
+huggingface-sb3
+tensorboard
